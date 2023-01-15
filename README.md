@@ -13,3 +13,6 @@ A containerized E2E data pipeline which showcases [Spark's Structured Streaming]
 <div align="center">
     <img src="./docs/architecture.png">
 </div>
+
+## Smoke Test
+To validate that the E2E pipeline is working correctly, you can execute the script `smoke-test.sh`

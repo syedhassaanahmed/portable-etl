@@ -25,11 +25,11 @@ if __name__ == "__main__":
     df_output_stream = processor.process_stream()
 
     # Uncomment for stdout debugging
-    query = df_output_stream \
-        .writeStream \
-        .outputMode("append") \
-        .format("console") \
-        .start()
+    # query = df_output_stream \
+    #     .writeStream \
+    #     .outputMode("append") \
+    #     .format("console") \
+    #     .start()
 
     mssql_host = os.environ["MSSQL_HOST"]
     mssql_sa_password = os.environ["MSSQL_SA_PASSWORD"]
