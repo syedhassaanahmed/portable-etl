@@ -48,7 +48,7 @@ services:
     # https://github.com/microsoft/sql-spark-connector/issues/191
     image: apache/spark-py:v3.1.3
     volumes:
-      - ./main.py:/app/main.py
+      - ./pyspark_app:/app
       - ./rooms.csv:/metadata/rooms.csv
       # Below 2 directories aren't writable hence these 2 mounts must be created for spark-submit to resolve Maven packages
       # https://stackoverflow.com/questions/60630832/i-cannot-use-package-option-on-bitnami-spark-docker-container
