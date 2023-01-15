@@ -21,6 +21,12 @@ jobs:
         pip install flake8
         flake8 ./pyspark_app
 
+    - name: Install Latest Docker Compose
+      run: |
+        VERSION=$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | jq --raw-output .name -r)
+        curl -L https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+
     - name: Build the Docker Compose
       run: |
         docker-compose build
