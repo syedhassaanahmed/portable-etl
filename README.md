@@ -1,4 +1,6 @@
 # spark-etl-edge
+![CI](https://github.com/syedhassaanahmed/spark-etl-edge/actions/workflows/ci.yml/badge.svg)
+
 A containerized E2E data pipeline which showcases [Spark's Structured Streaming](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#overview) capabilities.
 
 ## Components

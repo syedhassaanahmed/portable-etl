@@ -1,8 +1,16 @@
 from pyspark.sql import DataFrame, functions as F
-from pyspark.sql.types import *
+from pyspark.sql.types import (
+    StructType,
+    StructField,
+    StringType,
+    TimestampType,
+    DoubleType
+)
+
 
 class StreamProcessor:
-    def __init__(self, df_metadata: DataFrame, df_raw_stream: DataFrame) -> None:
+    def __init__(self, df_metadata: DataFrame,
+                 df_raw_stream: DataFrame) -> None:
         self.df_metadata = df_metadata
         self.df_raw_stream = df_raw_stream
 
@@ -13,8 +21,10 @@ class StreamProcessor:
         ])
 
     def process_stream(self) -> DataFrame:
-        df_output_stream = self.df_raw_stream.selectExpr("CAST(value AS STRING)") \
-            .select(F.from_json(F.col("value"), self.stream_schema).alias("data")) \
+        df_output_stream = self.df_raw_stream \
+            .selectExpr("CAST(value AS STRING)") \
+            .select(F.from_json(F.col("value"), self.stream_schema)
+                    .alias("data")) \
             .select("data.*")
 
         windowSpec = F.window("time", "5 seconds")
@@ -26,4 +36,5 @@ class StreamProcessor:
             .groupBy(windowSpec, "deviceId") \
             .agg(F.avg("doubleValue").alias("avgValue")) \
             .join(self.df_metadata, on="deviceId") \
-            .selectExpr("deviceId", "roomId", "avgValue", "window.start as start", "window.end as end")
+            .selectExpr("deviceId", "roomId", "avgValue",
+                        "window.start as start", "window.end as end")
