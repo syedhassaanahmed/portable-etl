@@ -7,8 +7,10 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName("MyPySparkStreamingApp").getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
 
-    kafka_broker = os.environ['KAFKA_BROKER']
-    kafka_topic = os.environ['KAFKA_TOPIC']
+    df_rooms = spark.read.csv("/metadata/rooms.csv", header=True, inferSchema=True)
+
+    kafka_broker = os.environ["KAFKA_BROKER"]
+    kafka_topic = os.environ["KAFKA_TOPIC"]
 
     df_stream = spark \
         .readStream \
@@ -35,7 +37,8 @@ if __name__ == "__main__":
         .withWatermark("time", "5 seconds") \
         .groupBy(windowSpec, "deviceId") \
         .agg(F.avg("doubleValue").alias("avgValue")) \
-        .selectExpr("deviceId", "avgValue", "window.start as start", "window.end as end")
+        .join(df_rooms, on="deviceId") \
+        .selectExpr("deviceId", "roomId", "avgValue", "window.start as start", "window.end as end")
 
     # Uncomment for stdout debugging
     # query = df_stream_agg \
@@ -44,8 +47,8 @@ if __name__ == "__main__":
     #     .format("console") \
     #     .start()
 
-    mssql_host = os.environ['MSSQL_HOST']
-    mssql_sa_password = os.environ['MSSQL_SA_PASSWORD']
+    mssql_host = os.environ["MSSQL_HOST"]
+    mssql_sa_password = os.environ["MSSQL_SA_PASSWORD"]
 
     # Using foreachBatch because the sql-spark-connector doesn't directly support writing streams
     query = df_stream_agg.writeStream \
