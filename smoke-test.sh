@@ -7,7 +7,7 @@ docker compose down
 echo "Starting all containers..."
 docker compose up -d
 
-RETRIES=120
+RETRIES=180
 MIN_ROW_COUNT=5
 
 source .env
@@ -32,7 +32,7 @@ do
         if [ $i = $RETRIES ];
         then
             echo "Found less than ${MIN_ROW_COUNT} rows in the table."
-            docker logs spark
+            docker compose logs spark
             exit 1
         else
             sleep 1
