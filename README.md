@@ -9,10 +9,13 @@ A containerized E2E data pipeline which showcases [Spark's Structured Streaming]
 - [Apache PySpark Docker Image](https://hub.docker.com/r/apache/spark-py)
 - [SQL Server 2022 Linux container image](https://learn.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-ver16&pivots=cs1-bash)
 
+## Codespaces
+This solution supports GitHub Codespaces through VS Code Dev Containers. The minimum required Codespaces machine type is `4-core`.
+
+## Smoke Test
+To validate that the E2E pipeline is working correctly, you can execute the script `smoke-test.sh`
+
 ## Architecture
 <div align="center">
     <img src="./docs/architecture.png">
 </div>
-
-## Smoke Test
-To validate that the E2E pipeline is working correctly, you can execute the script `smoke-test.sh`
