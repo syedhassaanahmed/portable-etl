@@ -21,8 +21,8 @@ jobs:
         pip install flake8
         flake8 ./pyspark_app
 
-    - name: Update Docker Compose
-      run: sudo apt-get -y install --only-upgrade docker-compose
+    - name: Install latest Docker Compose
+      run: sudo apt-get -y install docker-compose
 
     - name: Build the Docker Compose
       run: |
