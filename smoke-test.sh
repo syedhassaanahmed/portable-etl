@@ -7,7 +7,7 @@ docker compose down
 echo "Starting all containers..."
 docker compose up -d
 
-RETRIES=180
+RETRIES=60
 MIN_ROW_COUNT=5
 
 source .env
