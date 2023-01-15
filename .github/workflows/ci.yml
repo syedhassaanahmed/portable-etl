@@ -28,8 +28,6 @@ jobs:
         curl -L https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
         sudo chmod +x /usr/local/bin/docker-compose
 
-    # Smoke Test has to be disabled in CI due to this issue
-    # https://stackoverflow.com/questions/72061272/docker-compose-volume-mount-issue-in-github-actions-checked-out-repository
     - name: Run Smoke Test
       run: ./smoke-test.sh
       shell: bash

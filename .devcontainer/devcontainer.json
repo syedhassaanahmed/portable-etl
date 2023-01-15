@@ -1,0 +1,28 @@
+{
+    "build": { 
+        "dockerfile": "Dockerfile" 
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.flake8",
+                "ms-azuretools.vscode-docker",
+                "ms-mssql.mssql",
+                "jeppeandersen.vscode-kafka",
+                "timonwong.shellcheck"
+            ]
+        },
+        "codespaces": {
+            "repositories": {
+                "devcontainers/features": {
+                    "permissions": "write-all"
+                }
+            }
+        }
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    },
+    "postCreateCommand": "git config --global --add safe.directory /workspaces/spark-etl-edge"
+}

@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "Stopping all containers if exist..."
 docker compose down
-
-echo "Starting all containers..."
 docker compose up -d
 
 RETRIES=60
 MIN_ROW_COUNT=5
 
+# shellcheck source=/dev/null
 source .env
 
 for i in $(seq 1 1 $RETRIES)
@@ -29,10 +27,11 @@ do
         break
     else
         echo "Waiting for the PySpark App.. Attempt [${i}/${RETRIES}]"
-        if [ $i = $RETRIES ];
+        if [ "$i" = $RETRIES ];
         then
             echo "Found less than ${MIN_ROW_COUNT} rows in the table."
             docker compose logs spark
+            docker compose down
             exit 1
         else
             sleep 1
@@ -40,5 +39,4 @@ do
     fi
 done
 
-echo "Stopping all containers"
 docker compose down
