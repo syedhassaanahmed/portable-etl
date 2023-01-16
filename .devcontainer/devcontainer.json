@@ -29,5 +29,5 @@
         "ghcr.io/devcontainers/features/azure-cli:1": {},
         "ghcr.io/devcontainers/features/terraform:1": {}
     },
-    "postCreateCommand": "git config --global --add safe.directory /workspaces/spark-etl-edge"
+    "postCreateCommand": "git config --global --add safe.directory /workspaces/portable-etl"
 }
