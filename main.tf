@@ -38,7 +38,7 @@ resource "azurerm_eventhub" "evh" {
   name                = "evh-${random_string.unique.result}"
   namespace_name      = azurerm_eventhub_namespace.evhns.name
   resource_group_name = azurerm_resource_group.rg.name
-  partition_count     = 2
+  partition_count     = 3
   message_retention   = 1
 }
 
@@ -91,7 +91,7 @@ resource "azurerm_container_group" "ci" {
     }
     environment_variables = {
       EventHubConnectionString = "${azurerm_eventhub_namespace.evhns.default_primary_connection_string};EntityPath=${azurerm_eventhub.evh.name}"
-      DeviceCount              = 3
+      DeviceCount              = azurerm_eventhub.evh.partition_count
       MessageCount             = 0
       Template                 = <<-EOT
         { 
