@@ -22,7 +22,7 @@ if __name__ == "__main__":
     sql_server_options = {
         "driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
         "url": f"jdbc:sqlserver://{mssql_host};databaseName=master;",
-        "dbtable": "dbo.telemetry",
+        "dbtable": os.environ["TABLE_NAME"],
         "user": "sa",
         "password": os.environ["MSSQL_SA_PASSWORD"]
     }
