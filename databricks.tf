@@ -134,6 +134,7 @@ resource "databricks_dbfs_file" "metadata" {
 resource "databricks_job" "this" {
   name                = "pyspark_streaming_job"
   existing_cluster_id = databricks_cluster.this.id
+  always_running      = true
   notebook_task {
     notebook_path = databricks_notebook.main.path
   }
