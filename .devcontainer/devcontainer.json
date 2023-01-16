@@ -10,7 +10,10 @@
                 "ms-azuretools.vscode-docker",
                 "ms-mssql.mssql",
                 "jeppeandersen.vscode-kafka",
-                "timonwong.shellcheck"
+                "timonwong.shellcheck",
+                "ms-azuretools.vscode-azureterraform",
+                "HashiCorp.terraform-preview",
+                "ms-vscode.azurecli"
             ]
         },
         "codespaces": {
@@ -22,7 +25,9 @@
         }
     },
     "features": {
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/azure-cli:1": {},
+        "ghcr.io/devcontainers/features/terraform:1": {}
     },
     "postCreateCommand": "git config --global --add safe.directory /workspaces/spark-etl-edge"
 }

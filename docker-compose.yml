@@ -36,7 +36,7 @@ services:
       KafkaTopic: ${KAFKA_TOPIC}
       DeviceCount: 3
       MessageCount: 0 # send unlimited
-      Template: '{ "deviceId": "$.DeviceId", "time": "$.Time", "doubleValue": $.DoubleValue }'
+      Template: '{"deviceId": "$.DeviceId", "time": "$.Time", "doubleValue": $.DoubleValue}'
       Variables: '[{"name": "DoubleValue", "randomDouble":true, "min":0.22, "max":1.25}]'
   sql-server:
     image: mcr.microsoft.com/mssql/server:2022-latest

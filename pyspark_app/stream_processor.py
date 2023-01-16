@@ -1,4 +1,9 @@
-from pyspark.sql import DataFrame, functions as F
+from typing import Dict, Union
+from pyspark.sql import (
+    SparkSession,
+    DataFrame
+)
+from pyspark.sql import functions as F
 from pyspark.sql.types import (
     StructType,
     StructField,
@@ -9,10 +14,11 @@ from pyspark.sql.types import (
 
 
 class StreamProcessor:
-    def __init__(self, df_metadata: DataFrame,
-                 df_raw_stream: DataFrame) -> None:
-        self.df_metadata = df_metadata
-        self.df_raw_stream = df_raw_stream
+    def __init__(self, spark: SparkSession, metadata_path: str,
+                 kafka_options: Dict[str, Union[str, int]]) -> None:
+        self.spark = spark
+        self.metadata_path = metadata_path
+        self.kafka_options = kafka_options
 
         self.stream_schema = StructType([
             StructField("deviceId", StringType()),
@@ -21,7 +27,17 @@ class StreamProcessor:
         ])
 
     def process_stream(self) -> DataFrame:
-        df_output_stream = self.df_raw_stream \
+        df_metadata = self.spark.read.csv(self.metadata_path,
+                                          header=True,
+                                          inferSchema=True)
+
+        df_raw_stream = self.spark \
+            .readStream \
+            .format("kafka") \
+            .options(**self.kafka_options) \
+            .load()
+
+        df_output_stream = df_raw_stream \
             .selectExpr("CAST(value AS STRING)") \
             .select(F.from_json(F.col("value"), self.stream_schema)
                     .alias("data")) \
@@ -35,6 +51,6 @@ class StreamProcessor:
             .withWatermark("time", "5 seconds") \
             .groupBy(windowSpec, "deviceId") \
             .agg(F.avg("doubleValue").alias("avgValue")) \
-            .join(self.df_metadata, on="deviceId") \
+            .join(df_metadata, on="deviceId") \
             .selectExpr("deviceId", "roomId", "avgValue",
                         "window.start as start", "window.end as end")

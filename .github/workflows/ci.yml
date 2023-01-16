@@ -21,6 +21,10 @@ jobs:
         pip install flake8
         flake8 ./pyspark_app
 
+    - name: Terraform fmt check
+      run: |
+        terraform fmt -check -recursive
+
     # By default the GitHub Actions Ubuntu agents have Docker Compose 1.x installed
     - name: Install Latest Docker Compose
       run: |
