@@ -12,7 +12,6 @@
                 "jeppeandersen.vscode-kafka",
                 "timonwong.shellcheck",
                 "ms-azuretools.vscode-azureterraform",
-                "HashiCorp.terraform-preview",
                 "ms-vscode.azurecli"
             ]
         },
