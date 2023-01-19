@@ -16,12 +16,13 @@ if __name__ == "__main__":
     df_output_stream = processor.process_stream()
 
     mssql_host = os.environ["MSSQL_HOST"]
+    db_name = os.environ["DB_NAME"]
 
     # The "driver" option is buried deep into this issue
     # https://github.com/microsoft/sql-spark-connector/issues/177
     sql_server_options = {
         "driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
-        "url": f"jdbc:sqlserver://{mssql_host};databaseName=master;",
+        "url": f"jdbc:sqlserver://{mssql_host};databaseName={db_name};",
         "dbtable": os.environ["TABLE_NAME"],
         "user": "sa",
         "password": os.environ["MSSQL_SA_PASSWORD"]

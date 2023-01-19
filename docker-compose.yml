@@ -62,6 +62,7 @@ services:
       KAFKA_TOPIC: ${KAFKA_TOPIC}
       MSSQL_HOST: sql-server
       MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      DB_NAME: ${DB_NAME}
       TABLE_NAME: ${TABLE_NAME}
     # There should be no whitespace between the comma separated packages https://stackoverflow.com/questions/33928029/how-to-specify-multiple-dependencies-using-packages-for-spark-submit
     # The mssql-jdbc package must be explicitly added https://stackoverflow.com/questions/66903523/apache-spark-connector-for-sql-server-and-azure-sql

@@ -15,7 +15,7 @@ do
     # "-h -1" SQLCMD flag is used to remove column headers from the output
     # "SET NOCOUNT ON;" before the intended SQL query is used to remove output such as "n row(s) affected"
     # xargs removes the leading and trailing spaces from the output
-    SQL_CMD="/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P \"$MSSQL_SA_PASSWORD\" -d \"master\" -h -1 -Q \
+    SQL_CMD="/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P \"$MSSQL_SA_PASSWORD\" -d \"$DB_NAME\" -h -1 -Q \
         \"SET NOCOUNT ON; SELECT COUNT(1) FROM $TABLE_NAME\" | xargs"
 
     ROW_COUNT=$(docker compose exec sql-server bash -c "$SQL_CMD" || true)
