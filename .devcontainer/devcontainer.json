@@ -26,5 +26,5 @@
         "ghcr.io/devcontainers/features/azure-cli:1": {},
         "ghcr.io/devcontainers/features/terraform:1": {}
     },
-    "postCreateCommand": "git config --global --add safe.directory /workspaces/portable-etl && pip3 install -r requirements.txt"
+    "postCreateCommand": "git config --global --add safe.directory /workspaces/portable-etl && sudo pip3 install build && pip3 install -r requirements.txt"
 }

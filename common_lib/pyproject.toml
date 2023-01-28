@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "common_lib"
+version = "0.0.1"
+authors = [
+    {name = "Syed Hassaan Ahmed"},
+]
+description = "A small package containing libs for PySpark apps"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pyspark"
+]

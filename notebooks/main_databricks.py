@@ -1,9 +1,11 @@
 # Databricks notebook source
-# MAGIC %run ./stream_processor.py
+# MAGIC %run ./load_secrets.py
 
 # COMMAND ----------
 
-# MAGIC %run ./load_secrets.py
+import os
+from pyspark.sql import DataFrame
+from stream_processor import StreamProcessor
 
 # COMMAND ----------
 

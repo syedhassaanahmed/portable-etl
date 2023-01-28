@@ -96,22 +96,29 @@ resource "databricks_library" "sql" {
 
 locals {
   notebooks_path = "/Shared/pyspark_app"
+  wheel_name     = "common_lib-0.0.1-py3-none-any.whl"
+}
+
+# The wheel should be built outside of Terraform by "sudo python3 -m build ./common_lib"
+resource "databricks_dbfs_file" "wheel" {
+  source = "${path.module}/common_lib/dist/${local.wheel_name}"
+  path   = "/FileStore/${local.wheel_name}"
+}
+
+resource "databricks_library" "wheel" {
+  cluster_id = databricks_cluster.this.id
+  whl        = databricks_dbfs_file.wheel.dbfs_path
 }
 
 resource "databricks_notebook" "main" {
-  path           = "${local.notebooks_path}/main_databricks.py"
+  path           = "${local.notebooks_path}/main_databricks"
   language       = "PYTHON"
   content_base64 = filebase64("${path.module}/notebooks/main_databricks.py")
-}
-
-resource "databricks_notebook" "processor" {
-  path           = "${local.notebooks_path}/stream_processor.py"
-  language       = "PYTHON"
-  content_base64 = filebase64("${path.module}/pyspark_app/stream_processor.py")
+  depends_on     = [databricks_library.wheel]
 }
 
 resource "databricks_notebook" "secrets" {
-  path     = "${local.notebooks_path}/load_secrets.py"
+  path     = "${local.notebooks_path}/load_secrets"
   language = "PYTHON"
   content_base64 = base64encode(<<-EOT
     scope_name = "${databricks_secret_scope.this.name}"

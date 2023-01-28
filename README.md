@@ -12,7 +12,7 @@ In the Edge version, we orchestrate everything with `Docker Compose`. The pipeli
 </div>
 
 ## Cloud
-In the Cloud version, we orchestrate everything with Terraform. The IoT Telemetry Simulator runs in [Azure Container Instances](https://azure.microsoft.com/en-us/products/container-instances). It sends generated data to a Kafka head, [exposed through Azure Event Hubs](https://learn.microsoft.com/en-us/azure/event-hubs/azure-event-hubs-kafka-overview). Spark job is hosted in Azure Databricks and the aggregated output is streamed to an [Azure SQL DB](https://azure.microsoft.com/en-us/products/azure-sql/database/). The key point to note here is that the stream processing logic is encapsulated in `steam_processor.py` and is reused between the Edge and the Cloud.
+In the Cloud version, we orchestrate everything with Terraform (prior to running `terraform apply` you must ensure the wheel `common_lib/dist/common_lib-*.whl` exists by executing `sudo python3 -m build ./common_lib`). The IoT Telemetry Simulator runs in [Azure Container Instances](https://azure.microsoft.com/en-us/products/container-instances). It sends generated data to a Kafka head, [exposed through Azure Event Hubs](https://learn.microsoft.com/en-us/azure/event-hubs/azure-event-hubs-kafka-overview). Spark job is hosted in Azure Databricks and the aggregated output is streamed to an [Azure SQL DB](https://azure.microsoft.com/en-us/products/azure-sql/database/). The key point to note here is that the stream processing logic is encapsulated in `common_lib` [Wheel](https://pypi.org/project/wheel/) and is reused between the Edge and the Cloud.
 
 <div align="center">
     <img src="./docs/cloud-architecture.png">
