@@ -4,7 +4,7 @@ set -euo pipefail
 docker compose down
 docker compose up -d
 
-RETRIES=60
+RETRIES=90
 MIN_ROW_COUNT=5
 
 # shellcheck source=/dev/null
