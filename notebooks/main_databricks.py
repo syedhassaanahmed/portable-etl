@@ -3,9 +3,16 @@
 
 # COMMAND ----------
 
-import os
 from pyspark.sql import DataFrame
 from stream_processor import StreamProcessor
+
+# COMMAND ----------
+
+df_metadata = spark.read.csv("/metadata/rooms.csv",
+                             header=True,
+                             inferSchema=True)
+
+display(df_metadata)
 
 # COMMAND ----------
 
@@ -20,11 +27,18 @@ kafka_options = {
     "kafka.sasl.jaas.config": eh_sasl
 }
 
-processor = StreamProcessor(spark, "dbfs:/metadata/rooms.csv", kafka_options)
+df_raw_stream = (spark.readStream
+                 .format("kafka")
+                 .options(**kafka_options)
+                 .load())
+
+display(df_raw_stream)
 
 # COMMAND ----------
 
-df_output_stream = processor.process_stream()
+processor = StreamProcessor()
+df_output_stream = processor.process_stream(df_metadata, df_raw_stream)
+
 display(df_output_stream)
 
 # COMMAND ----------
@@ -42,18 +56,18 @@ sql_server_options = {
 # COMMAND ----------
 
 def write_to_sql_server(df: DataFrame, epoch_id: int) -> None:
-    df.write \
-      .format("com.microsoft.sqlserver.jdbc.spark") \
-      .mode("append") \
-      .options(**sql_server_options) \
-      .save()
+    (df.write
+     .format("com.microsoft.sqlserver.jdbc.spark")
+     .mode("append")
+     .options(**sql_server_options)
+     .save())
 
 # COMMAND ----------
 
 # Using foreachBatch because the sql-spark-connector doesn't directly support writing streams
-query = df_output_stream.writeStream \
-    .outputMode("append") \
-    .option("checkpointLocation", "dbfs:/checkpointdir") \
-    .foreachBatch(write_to_sql_server) \
-    .start() \
-    .awaitTermination()
+query = (df_output_stream.writeStream
+         .outputMode("append")
+         .option("checkpointLocation", "dbfs:/checkpointdir")
+         .foreachBatch(write_to_sql_server)
+         .start()
+         .awaitTermination())
