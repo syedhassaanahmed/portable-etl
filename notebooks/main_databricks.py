@@ -1,5 +1,5 @@
 # Databricks notebook source
-# MAGIC %run ./load_secrets.py
+# MAGIC %run ./load_secrets
 
 # COMMAND ----------
 

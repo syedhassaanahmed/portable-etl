@@ -110,13 +110,6 @@ resource "databricks_library" "wheel" {
   whl        = databricks_dbfs_file.wheel.dbfs_path
 }
 
-resource "databricks_notebook" "main" {
-  path           = "${local.notebooks_path}/main_databricks"
-  language       = "PYTHON"
-  content_base64 = filebase64("${path.module}/notebooks/main_databricks.py")
-  depends_on     = [databricks_library.wheel]
-}
-
 resource "databricks_notebook" "secrets" {
   path     = "${local.notebooks_path}/load_secrets"
   language = "PYTHON"
@@ -131,6 +124,19 @@ resource "databricks_notebook" "secrets" {
     db_password = dbutils.secrets.get(scope_name, "${databricks_secret.dbpassword.key}")
     EOT
   )
+}
+
+resource "databricks_notebook" "main" {
+  path           = "${local.notebooks_path}/main_databricks"
+  language       = "PYTHON"
+  content_base64 = filebase64("${path.module}/notebooks/main_databricks.py")
+  depends_on = [
+    databricks_notebook.secrets,
+    databricks_library.wheel,
+    databricks_library.kafka,
+    databricks_dbfs_file.metadata,
+    databricks_library.sql
+  ]
 }
 
 resource "databricks_dbfs_file" "metadata" {
