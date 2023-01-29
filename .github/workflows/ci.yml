@@ -34,5 +34,5 @@ jobs:
 
     - name: Run Smoke Test
       working-directory: ./src
-      run: ./src/smoke-test.sh
+      run: ./smoke-test.sh
       shell: bash
