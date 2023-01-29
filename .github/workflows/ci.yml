@@ -19,7 +19,7 @@ jobs:
     - name: Linting with flake8
       run: |
         pip install flake8
-        flake8 ./pyspark_app ./common_lib
+        flake8 ./src/pyspark_app ./src/common_lib
 
     - name: Terraform fmt check
       run: |
@@ -33,5 +33,5 @@ jobs:
         sudo chmod +x /usr/local/bin/docker-compose
 
     - name: Run Smoke Test
-      run: ./smoke-test.sh
+      run: ./src/smoke-test.sh
       shell: bash

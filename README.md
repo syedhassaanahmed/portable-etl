@@ -14,7 +14,7 @@ In the Edge version, we provision and orchestrate everything with `Docker Compos
 ## Cloud
 In the Cloud version, we provision all infrastructure with Terraform.
 
-**Note:** Prior to running `terraform apply` you must ensure the wheel `common_lib/dist/common_lib-*.whl` exists locally by executing `sudo python3 -m build ./common_lib`.
+**Note:** Prior to running `terraform apply` you must ensure the wheel `src/common_lib/dist/common_lib-*.whl` exists locally by executing `sudo python3 -m build ./src/common_lib`.
 
 The IoT Telemetry Simulator is hosted in [Azure Container Instances](https://azure.microsoft.com/en-us/products/container-instances). It sends generated data to a Kafka head, [exposed through Azure Event Hubs](https://learn.microsoft.com/en-us/azure/event-hubs/azure-event-hubs-kafka-overview).
 The rest of the ETL workload is orchestrated using a combination of a [Delta Live Tables](https://learn.microsoft.com/en-us/azure/databricks/workflows/delta-live-tables/) Pipeline and a [Databricks Job](https://learn.microsoft.com/en-us/azure/databricks/workflows/jobs/jobs). The DLT Pipeline is responsible for reading and aggregating the data from sources, while the Databricks job, streams the aggregated output to an [Azure SQL DB](https://azure.microsoft.com/en-us/products/azure-sql/database/). Key point to note here is that the stream processing logic is shared between the Edge and Cloud through the `common_lib` [Wheel](https://pypi.org/project/wheel/).
