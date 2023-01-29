@@ -80,20 +80,6 @@ resource "databricks_cluster" "this" {
   }
 }
 
-resource "databricks_library" "kafka" {
-  cluster_id = databricks_cluster.this.id
-  maven {
-    coordinates = "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.3"
-  }
-}
-
-resource "databricks_library" "sql" {
-  cluster_id = databricks_cluster.this.id
-  maven {
-    coordinates = "com.microsoft.azure:spark-mssql-connector_2.12:1.2.0"
-  }
-}
-
 locals {
   notebooks_path = "/Shared/pyspark_app"
   wheel_name     = "common_lib-0.0.1-py3-none-any.whl"
@@ -105,50 +91,73 @@ resource "databricks_dbfs_file" "wheel" {
   path   = "/FileStore/${local.wheel_name}"
 }
 
-resource "databricks_library" "wheel" {
-  cluster_id = databricks_cluster.this.id
-  whl        = databricks_dbfs_file.wheel.dbfs_path
-}
-
-resource "databricks_notebook" "secrets" {
-  path     = "${local.notebooks_path}/load_secrets"
-  language = "PYTHON"
-  content_base64 = base64encode(<<-EOT
-    scope_name = "${databricks_secret_scope.this.name}"
-    eh_name = dbutils.secrets.get(scope_name, "${databricks_secret.ehname.key}")
-    eh_namespace = dbutils.secrets.get(scope_name, "${databricks_secret.ehnamespace.key}")
-    eh_connection_string = dbutils.secrets.get(scope_name, "${databricks_secret.ehconnection.key}")
-    db_server = dbutils.secrets.get(scope_name, "${databricks_secret.dbserver.key}")
-    db_name = dbutils.secrets.get(scope_name, "${databricks_secret.dbname.key}")
-    db_user = dbutils.secrets.get(scope_name, "${databricks_secret.dbuser.key}")
-    db_password = dbutils.secrets.get(scope_name, "${databricks_secret.dbpassword.key}")
-    EOT
-  )
-}
-
-resource "databricks_notebook" "main" {
-  path           = "${local.notebooks_path}/main_databricks"
-  language       = "PYTHON"
-  content_base64 = filebase64("${path.module}/notebooks/main_databricks.py")
-  depends_on = [
-    databricks_notebook.secrets,
-    databricks_library.wheel,
-    databricks_library.kafka,
-    databricks_dbfs_file.metadata,
-    databricks_library.sql
-  ]
-}
-
 resource "databricks_dbfs_file" "metadata" {
   source = "${path.module}/metadata/rooms.csv"
   path   = "/metadata/rooms.csv"
 }
 
-resource "databricks_job" "this" {
-  name                = "pyspark_streaming_job"
+resource "databricks_notebook" "main" {
+  path           = "${local.notebooks_path}/main_dlt"
+  language       = "PYTHON"
+  content_base64 = filebase64("${path.module}/notebooks/main_dlt.py")
+}
+
+resource "databricks_pipeline" "dlt" {
+  name    = "My DLT Pipeline"
+  storage = "/my-dlt-pipeline"
+  configuration = {
+    secretsScopeName = databricks_secret_scope.this.name
+    metadataPath     = databricks_dbfs_file.metadata.path
+  }
+
+  cluster {
+    label = "default"
+    autoscale {
+      min_workers = 1
+      max_workers = azurerm_eventhub.evh.partition_count
+    }
+  }
+
+  library {
+    notebook {
+      path = databricks_notebook.main.path
+    }
+  }
+
+  continuous = true
+
+  depends_on = [
+    databricks_dbfs_file.wheel
+  ]
+}
+
+resource "databricks_library" "sql" {
+  cluster_id = databricks_cluster.this.id
+  maven {
+    coordinates = "com.microsoft.azure:spark-mssql-connector_2.12:1.2.0"
+  }
+}
+
+resource "databricks_notebook" "sql" {
+  path           = "${local.notebooks_path}/output_to_sql_db"
+  language       = "PYTHON"
+  content_base64 = filebase64("${path.module}/notebooks/output_to_sql_db.py")
+}
+
+resource "databricks_job" "sql" {
+  name                = "output_to_sql_db"
   existing_cluster_id = databricks_cluster.this.id
   always_running      = true
   notebook_task {
-    notebook_path = databricks_notebook.main.path
+    notebook_path = databricks_notebook.sql.path
+
+    base_parameters = {
+      secretsScopeName   = databricks_secret_scope.this.name
+      dltPipelineStorage = databricks_pipeline.dlt.storage
+    }
   }
+  depends_on = [
+    databricks_library.sql,
+    databricks_secret.dbserver
+  ]
 }
