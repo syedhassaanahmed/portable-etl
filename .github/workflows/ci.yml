@@ -33,5 +33,6 @@ jobs:
         sudo chmod +x /usr/local/bin/docker-compose
 
     - name: Run Smoke Test
+      working-directory: ./src
       run: ./src/smoke-test.sh
       shell: bash
