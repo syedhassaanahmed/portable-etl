@@ -36,7 +36,7 @@ services:
       KafkaTopic: ${KAFKA_TOPIC}
       DeviceCount: 3
       MessageCount: 0 # send unlimited
-      Template: '{"deviceId": "$.DeviceId", "time": "$.Time", "doubleValue": $.DoubleValue}'
+      Template: '{"deviceId": "$.DeviceId", "deviceTimestamp": "$.Time", "doubleValue": $.DoubleValue}'
       Variables: '[{"name": "DoubleValue", "randomDouble":true, "min":0.22, "max":1.25}]'
   sql-server:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -45,12 +45,27 @@ services:
     environment:
       ACCEPT_EULA: Y
       MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+  # The only purpose of this service is to wait for the SQL Server to start and create the DB and Table
+  sql-setup:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      MSSQL_HOST: sql-server
+      MSSQL_SA_USER: SA
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    volumes:
+      - ./db:/db
+    working_dir: /db
+    depends_on:
+      - sql-server
+    entrypoint: "./init-db.sh"
   build-wheel:
     image: python:3-bullseye
     volumes:
       - ./common_lib:/common_lib
       - shared_volume:/common_lib/dist
-    entrypoint: ["bash", "-c", "pip install build && python -m build /common_lib"]
+    # Explicitly delete Wheel before building in order to avoid picking up existing version from mount
+    entrypoint: ["bash", "-c", "rm -rf /common_lib/dist/*.whl && pip install build && python -m build /common_lib"]
   spark:
     # Until this issue is resolved, we're stuck at Spark 3.1.x
     # https://github.com/microsoft/sql-spark-connector/issues/191
@@ -64,7 +79,7 @@ services:
     depends_on:
       - build-wheel
       - kafka-setup
-      - sql-server
+      - sql-setup
     environment:
       KAFKA_BROKER: kafka:9092
       KAFKA_TOPIC: ${KAFKA_TOPIC}
@@ -79,7 +94,7 @@ services:
     command: ["bash", "-c", 
       "while [ ! -f /common_lib/common_lib-0.0.1-py3-none-any.whl ]; do echo 'Waiting for wheel build...'; sleep 1; done;
       /opt/spark/bin/spark-submit --packages
-      org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.3,com.microsoft.azure:spark-mssql-connector_2.12:1.2.0,com.microsoft.sqlserver:mssql-jdbc:8.4.1.jre8
+      org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.3,com.microsoft.azure:spark-mssql-connector_2.12:1.2.0,com.microsoft.sqlserver:mssql-jdbc:11.2.3.jre8
       --conf spark.driver.extraJavaOptions='-Divy.cache.dir=/tmp -Divy.home=/tmp' 
       --py-files /common_lib/*.whl /app/main.py"]
 volumes:

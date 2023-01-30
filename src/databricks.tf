@@ -1,9 +1,9 @@
 resource "azurerm_databricks_workspace" "dbw" {
-  name                        = "dbw-${random_string.unique.result}"
+  name                        = "dbw-${local.unique_id}"
   resource_group_name         = azurerm_resource_group.rg.name
   location                    = azurerm_resource_group.rg.location
   sku                         = "premium"
-  managed_resource_group_name = "dbw-rg-${random_string.unique.result}"
+  managed_resource_group_name = "dbw-rg-${local.unique_id}"
 }
 
 provider "databricks" {
@@ -166,6 +166,7 @@ resource "databricks_job" "sql" {
     databricks_secret.dbserver,
     databricks_secret.dbname,
     databricks_secret.dbuser,
-    databricks_secret.dbpassword
+    databricks_secret.dbpassword,
+    azurerm_container_group.sql
   ]
 }

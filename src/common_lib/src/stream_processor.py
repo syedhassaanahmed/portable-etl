@@ -13,26 +13,15 @@ class StreamProcessor:
     def __init__(self) -> None:
         self.stream_schema = StructType([
             StructField("deviceId", StringType()),
-            StructField("time", TimestampType()),
+            StructField("deviceTimestamp", TimestampType()),
             StructField("doubleValue", DoubleType())
         ])
 
     def process_stream(self, df_metadata: DataFrame,
                        df_raw_stream: DataFrame) -> DataFrame:
-        df_output_stream = (df_raw_stream
-                            .selectExpr("CAST(value AS STRING)")
-                            .select(F.from_json(F.col("value"),
-                                    self.stream_schema).alias("data"))
-                            .select("data.*"))
-
-        windowSpec = F.window("time", "5 seconds")
-
-        # Watermarking handles late arrivals
-        # https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#handling-late-data-and-watermarking
-        return (df_output_stream
-                .withWatermark("time", "5 seconds")
-                .groupBy(windowSpec, "deviceId")
-                .agg(F.avg("doubleValue").alias("avgValue"))
+        return (df_raw_stream
+                .withColumn("data", F.from_json(F.col("value").cast("STRING"),
+                            self.stream_schema))
+                .selectExpr("data.*")
                 .join(df_metadata, on="deviceId")
-                .selectExpr("deviceId", "roomId", "avgValue",
-                            "window.start as start", "window.end as end"))
+                .withColumn("ingestionTimestamp", F.current_timestamp()))

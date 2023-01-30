@@ -29,12 +29,14 @@ if __name__ == "__main__":
 
     # The "driver" option is buried deep into this issue
     # https://github.com/microsoft/sql-spark-connector/issues/177
+    # "schemaCheckEnabled": False because https://github.com/microsoft/sql-spark-connector/issues/5
     sql_server_options = {
         "driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
-        "url": f"jdbc:sqlserver://{mssql_host};databaseName={db_name};",
+        "url": f"jdbc:sqlserver://{mssql_host};databaseName={db_name};encrypt=true;trustServerCertificate=true;",
         "dbtable": os.environ["TABLE_NAME"],
         "user": "sa",
-        "password": os.environ["MSSQL_SA_PASSWORD"]
+        "password": os.environ["MSSQL_SA_PASSWORD"],
+        "schemaCheckEnabled": False
     }
 
     def write_to_sql_server(df: DataFrame, epoch_id: int) -> None:
@@ -48,7 +50,8 @@ if __name__ == "__main__":
 
     # Using foreachBatch because the sql-spark-connector
     # doesn't directly support writing streams
-    query = (df_output_stream.writeStream
+    query = (df_output_stream
+             .writeStream
              .outputMode("append")
              .foreachBatch(write_to_sql_server)
              .start()

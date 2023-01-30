@@ -64,12 +64,14 @@ db_password = dbutils.secrets.get(scope_name, "DB_PASSWORD")
 
 # The "driver" option is buried deep into this issue
 # https://github.com/microsoft/sql-spark-connector/issues/177
+# "schemaCheckEnabled": False because https://github.com/microsoft/sql-spark-connector/issues/5
 sql_server_options = {
     "driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
     "url": f"jdbc:sqlserver://{db_server};databaseName={db_name};",
-    "dbtable": "dbo.telemetry",
+    "dbtable": "dbo.ProcessedStream",
     "user": db_user,
-    "password": db_password
+    "password": db_password,
+    "schemaCheckEnabled": False
 }
 
 # COMMAND ----------
@@ -83,8 +85,9 @@ def write_to_sql_server(df: DataFrame, epoch_id: int) -> None:
 
 # COMMAND ----------
 
-(df_stream_processed.writeStream
-                    .outputMode("append")
-                    .foreachBatch(write_to_sql_server)
-                    .start()
-                    .awaitTermination())
+(df_stream_processed
+ .writeStream
+ .outputMode("append")
+ .foreachBatch(write_to_sql_server)
+ .start()
+ .awaitTermination())
