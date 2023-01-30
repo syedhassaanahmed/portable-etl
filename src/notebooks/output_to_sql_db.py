@@ -1,16 +1,57 @@
 # Databricks notebook source
+import time
 from pyspark.sql import DataFrame
+
 
 # COMMAND ----------
 
 dbutils.widgets.text("secretsScopeName", "")
-dbutils.widgets.text("dltPipelineStorage", "")
+dbutils.widgets.text("dltDatabaseName", "")
 
 # COMMAND ----------
 
-dlt_pipeline_storage = dbutils.widgets.get("dltPipelineStorage")
-df_stream_processed = spark.readStream.format("delta").load(f"dbfs:{dlt_pipeline_storage}/tables/stream_processed")
+# Wait for DLT to create the database
+dlt_database_name = dbutils.widgets.get("dltDatabaseName")
 
+d_counter = 0
+while True:
+    databases = spark.catalog.listDatabases()
+
+    if any(d.name == dlt_database_name for d in databases):
+        print(f"Database {dlt_database_name} found.")
+        break
+    elif d_counter > 30:
+        print(f"Timeout expired, Database {dlt_database_name} not found.")
+        break
+        
+    print(f"Database {dlt_database_name} not yet found...")
+    d_counter += 1
+    time.sleep(10)
+
+# COMMAND ----------
+
+# Wait for DLT to create the table
+dlt_table_name = "stream_processed"
+full_dlt_table_name = f"{dlt_database_name}.{dlt_table_name}"
+
+t_counter = 0
+while True:
+    tables = spark.catalog.listTables(dlt_database_name)
+
+    if any(t.name == dlt_table_name for t in tables):
+        print(f"Table {full_dlt_table_name} found.")
+        break
+    elif t_counter > 30:
+        print(f"Timeout expired, Table {full_dlt_table_name} not found.")
+        break
+        
+    print(f"Table {full_dlt_table_name} not yet found...")
+    t_counter += 1
+    time.sleep(10)
+
+# COMMAND ----------
+
+df_stream_processed = spark.readStream.format("delta").table(f"{full_dlt_table_name}")
 display(df_stream_processed)
 
 # COMMAND ----------

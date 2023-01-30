@@ -105,6 +105,8 @@ resource "databricks_notebook" "main" {
 resource "databricks_pipeline" "dlt" {
   name    = "My DLT Pipeline"
   storage = "/my-dlt-pipeline"
+  target  = "telemetry"
+
   configuration = {
     secretsScopeName = databricks_secret_scope.this.name
     metadataPath     = databricks_dbfs_file.metadata.path
@@ -127,7 +129,10 @@ resource "databricks_pipeline" "dlt" {
   continuous = true
 
   depends_on = [
-    databricks_dbfs_file.wheel
+    databricks_dbfs_file.wheel,
+    databricks_secret.ehname,
+    databricks_secret.ehnamespace,
+    databricks_secret.ehconnection
   ]
 }
 
@@ -152,12 +157,15 @@ resource "databricks_job" "sql" {
     notebook_path = databricks_notebook.sql.path
 
     base_parameters = {
-      secretsScopeName   = databricks_secret_scope.this.name
-      dltPipelineStorage = databricks_pipeline.dlt.storage
+      secretsScopeName = databricks_secret_scope.this.name
+      dltDatabaseName  = databricks_pipeline.dlt.target
     }
   }
   depends_on = [
     databricks_library.sql,
-    databricks_secret.dbserver
+    databricks_secret.dbserver,
+    databricks_secret.dbname,
+    databricks_secret.dbuser,
+    databricks_secret.dbpassword
   ]
 }

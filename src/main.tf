@@ -42,10 +42,15 @@ resource "azurerm_eventhub" "evh" {
   message_retention   = 1
 }
 
+# https://learn.microsoft.com/en-us/sql/relational-databases/security/password-policy?redirectedfrom=MSDN&view=sql-server-ver16#password-complexity
 resource "random_password" "sql" {
-  length           = 16
+  length           = 8
   special          = true
-  override_special = "_%@"
+  override_special = "!$#%"
+  min_lower        = 1
+  min_upper        = 1
+  min_numeric      = 1
+  min_special      = 1
 }
 
 resource "azurerm_mssql_server" "sql" {
