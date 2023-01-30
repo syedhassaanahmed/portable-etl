@@ -26,13 +26,16 @@ if __name__ == "__main__":
 
     mssql_host = os.environ["MSSQL_HOST"]
     db_name = os.environ["DB_NAME"]
+    mssql_url = f"jdbc:sqlserver://{mssql_host};databaseName={db_name};"
+    mssql_url += "encrypt=true;trustServerCertificate=true;"
 
     # The "driver" option is buried deep into this issue
     # https://github.com/microsoft/sql-spark-connector/issues/177
-    # "schemaCheckEnabled": False because https://github.com/microsoft/sql-spark-connector/issues/5
+    # "schemaCheckEnabled": False
+    # because https://github.com/microsoft/sql-spark-connector/issues/5
     sql_server_options = {
         "driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
-        "url": f"jdbc:sqlserver://{mssql_host};databaseName={db_name};encrypt=true;trustServerCertificate=true;",
+        "url": mssql_url,
         "dbtable": os.environ["TABLE_NAME"],
         "user": "sa",
         "password": os.environ["MSSQL_SA_PASSWORD"],
