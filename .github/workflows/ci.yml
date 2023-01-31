@@ -25,6 +25,14 @@ jobs:
       run: |
         terraform fmt -check -recursive
 
+    - name: Terraform Init
+      run: |
+        terraform init
+
+    - name: Terraform Plan
+      run: |
+        terraform plan
+
     # By default the GitHub Actions Ubuntu agents have Docker Compose 1.x installed
     - name: Install Latest Docker Compose
       run: |
