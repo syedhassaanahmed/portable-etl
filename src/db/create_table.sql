@@ -5,6 +5,6 @@ IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Pr
 		[ingestionTimestamp] [datetime2] NOT NULL,
 		[doubleValue] [float] NOT NULL,
 		[roomId] [nvarchar](max) NOT NULL,
-        [dbTimestamp] AS GETUTCDATE()
+        [dbTimestamp] AS CAST(GETUTCDATE() AS datetime2)
 	)
 GO
