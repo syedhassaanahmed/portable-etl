@@ -118,12 +118,7 @@ resource "azurerm_container_group" "sql" {
 
     commands = [
       "/bin/bash", "-c", <<-EOT
-        /opt/mssql-tools/bin/sqlcmd \
-          -S "$MSSQL_HOST" \
-          -U "$MSSQL_SA_USER" \
-          -P "$MSSQL_SA_PASSWORD" \
-          -d "$DB_NAME" \
-          -i /db/create_table"
+        /opt/mssql-tools/bin/sqlcmd -S "$MSSQL_HOST" -U "$MSSQL_SA_USER" -P "$MSSQL_SA_PASSWORD" -d "$DB_NAME" -i /db/create_table
       EOT
     ]
   }

@@ -19,6 +19,8 @@ class StreamProcessor:
 
     def process_stream(self, df_metadata: DataFrame,
                        df_raw_stream: DataFrame) -> DataFrame:
+        # The output schema should match the
+        # Table definition in create_table.sql
         return (df_raw_stream
                 .withColumn("data", F.from_json(F.col("value").cast("STRING"),
                             self.stream_schema))
