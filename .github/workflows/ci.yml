@@ -17,9 +17,17 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Linting with flake8
+      working-directory: ./src
       run: |
         pip install flake8
-        flake8 ./src/pyspark_app ./src/common_lib
+        flake8 ./pyspark_app ./common_lib
+
+    - name: Build Wheel
+      working-directory: ./src
+      run: |
+        pip install build
+        pip install -r requirements.txt
+        python3 -m build ./common_lib
 
     - name: Terraform fmt check
       run: |
