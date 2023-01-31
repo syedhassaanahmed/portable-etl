@@ -26,10 +26,12 @@ jobs:
         terraform fmt -check -recursive
 
     - name: Terraform Init
+      working-directory: ./src
       run: |
         terraform init
 
     - name: Terraform Plan
+      working-directory: ./src
       run: |
         terraform plan
 

@@ -6,6 +6,7 @@ docker compose up -d
 
 RETRIES=90
 MIN_ROW_COUNT=5
+TABLE_NAME="dbo.ProcessedStream"
 
 # shellcheck source=/dev/null
 source .env
