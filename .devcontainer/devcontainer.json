@@ -3,14 +3,16 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "ms-python.python",
-                "ms-python.flake8",
+                "databricks.databricks",
+                "hashicorp.terraform",
+                "jeppeandersen.vscode-kafka",
+                "ms-azuretools.vscode-azureterraform",
                 "ms-azuretools.vscode-docker",
                 "ms-mssql.mssql",
-                "jeppeandersen.vscode-kafka",
-                "timonwong.shellcheck",
-                "ms-azuretools.vscode-azureterraform",
-                "ms-vscode.azurecli"
+                "ms-python.flake8",
+                "ms-python.python",
+                "RandomFractalsInc.vscode-data-preview",
+                "timonwong.shellcheck"
             ]
         },
         "codespaces": {

@@ -4,7 +4,7 @@ set -euo pipefail
 docker compose down
 docker compose up -d
 
-RETRIES=90
+RETRIES=60
 MIN_ROW_COUNT=5
 TABLE_NAME="dbo.ProcessedStream"
 
