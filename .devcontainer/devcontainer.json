@@ -5,6 +5,7 @@
             "extensions": [
                 "databricks.databricks",
                 "hashicorp.terraform",
+                "hediet.vscode-drawio",
                 "jeppeandersen.vscode-kafka",
                 "ms-azuretools.vscode-azureterraform",
                 "ms-azuretools.vscode-docker",

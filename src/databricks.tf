@@ -11,11 +11,8 @@ provider "databricks" {
   azure_workspace_resource_id = azurerm_databricks_workspace.dbw.id
 }
 
-# Until this issue is resolved, we're stuck at Spark 3.1
-# https://github.com/microsoft/sql-spark-connector/issues/191
-data "databricks_spark_version" "spark31" {
-  spark_version = "3.1"
-  depends_on    = [azurerm_databricks_workspace.dbw]
+data "databricks_spark_version" "latest" {
+  depends_on = [azurerm_databricks_workspace.dbw]
 }
 
 data "databricks_node_type" "smallest" {
@@ -71,7 +68,7 @@ resource "databricks_secret" "dbpassword" {
 
 resource "databricks_cluster" "this" {
   cluster_name            = "Exploration Cluster"
-  spark_version           = data.databricks_spark_version.spark31.id
+  spark_version           = data.databricks_spark_version.latest.id
   node_type_id            = data.databricks_node_type.smallest.id
   autotermination_minutes = 20
   autoscale {
@@ -139,7 +136,7 @@ resource "databricks_pipeline" "dlt" {
 resource "databricks_library" "sql" {
   cluster_id = databricks_cluster.this.id
   maven {
-    coordinates = "com.microsoft.azure:spark-mssql-connector_2.12:1.2.0"
+    coordinates = "com.microsoft.azure:spark-mssql-connector_2.12:1.3.0-BETA"
   }
 }
 

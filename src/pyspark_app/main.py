@@ -38,7 +38,6 @@ if __name__ == "__main__":
         "dbtable": "dbo.ProcessedStream",
         "user": "sa",
         "password": os.environ["MSSQL_SA_PASSWORD"],
-        "encrypt": True,
         "trustServerCertificate": True,
         "schemaCheckEnabled": False
     }
