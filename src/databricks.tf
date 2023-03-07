@@ -111,15 +111,12 @@ resource "databricks_pipeline" "dlt" {
 
   cluster {
     label = "default"
-    autoscale {
-      min_workers = 1
-      max_workers = azurerm_eventhub.evh.partition_count
-    }
+    num_workers = azurerm_eventhub.evh.partition_count
   }
 
   library {
     notebook {
-      path = databricks_notebook.main.path
+      path = databricks_notebook.main.id
     }
   }
 
