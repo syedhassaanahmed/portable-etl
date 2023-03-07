@@ -110,7 +110,7 @@ resource "databricks_pipeline" "dlt" {
   }
 
   cluster {
-    label = "default"
+    label       = "default"
     num_workers = azurerm_eventhub.evh.partition_count
   }
 
