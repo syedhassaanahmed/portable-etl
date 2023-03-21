@@ -2,11 +2,11 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=3.46.0"
+      version = "=3.48.0"
     }
     databricks = {
       source  = "databricks/databricks"
-      version = "1.11.1"
+      version = "=1.13.0"
     }
   }
 }
@@ -129,7 +129,7 @@ resource "azurerm_container_group" "simulator" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Linux"
-  depends_on          = [databricks_job.sql]
+  depends_on          = [databricks_job.main]
 
   container {
     name   = "iot-telemetry-simulator"
