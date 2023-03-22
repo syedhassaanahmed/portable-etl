@@ -88,46 +88,16 @@ resource "databricks_dbfs_file" "wheel" {
   path   = "/FileStore/${local.wheel_name}"
 }
 
-resource "databricks_dbfs_file" "metadata" {
-  source = "${path.module}/metadata/rooms.csv"
-  path   = "/metadata/rooms.csv"
+resource "databricks_library" "wheel" {
+  cluster_id = databricks_cluster.this.id
+  whl        = databricks_dbfs_file.wheel.dbfs_path
 }
 
-resource "databricks_notebook" "main" {
-  path           = "${local.notebooks_path}/main_dlt"
-  language       = "PYTHON"
-  content_base64 = filebase64("${path.module}/notebooks/main_dlt.py")
-}
-
-resource "databricks_pipeline" "dlt" {
-  name    = "My DLT Pipeline"
-  storage = "/my-dlt-pipeline"
-  target  = "telemetry"
-
-  configuration = {
-    secretsScopeName = databricks_secret_scope.this.name
-    metadataPath     = databricks_dbfs_file.metadata.path
+resource "databricks_library" "kafka" {
+  cluster_id = databricks_cluster.this.id
+  maven {
+    coordinates = "org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2"
   }
-
-  cluster {
-    label       = "default"
-    num_workers = azurerm_eventhub.evh.partition_count
-  }
-
-  library {
-    notebook {
-      path = databricks_notebook.main.id
-    }
-  }
-
-  continuous = true
-
-  depends_on = [
-    databricks_dbfs_file.wheel,
-    databricks_secret.ehname,
-    databricks_secret.ehnamespace,
-    databricks_secret.ehconnection
-  ]
 }
 
 resource "databricks_library" "sql" {
@@ -137,30 +107,35 @@ resource "databricks_library" "sql" {
   }
 }
 
-resource "databricks_notebook" "sql" {
-  path           = "${local.notebooks_path}/output_to_sql_db"
-  language       = "PYTHON"
-  content_base64 = filebase64("${path.module}/notebooks/output_to_sql_db.py")
+resource "databricks_dbfs_file" "metadata" {
+  source = "${path.module}/metadata/rooms.csv"
+  path   = "/metadata/rooms.csv"
 }
 
-resource "databricks_job" "sql" {
-  name                = "output_to_sql_db"
+resource "databricks_notebook" "main" {
+  path           = "${local.notebooks_path}/main_databricks"
+  language       = "PYTHON"
+  content_base64 = filebase64("${path.module}/notebooks/main_databricks.py")
+}
+
+resource "databricks_job" "main" {
+  name                = "main_job"
   existing_cluster_id = databricks_cluster.this.id
   always_running      = true
   notebook_task {
-    notebook_path = databricks_notebook.sql.path
+    notebook_path = databricks_notebook.main.path
 
     base_parameters = {
       secretsScopeName = databricks_secret_scope.this.name
-      dltDatabaseName  = databricks_pipeline.dlt.target
     }
   }
   depends_on = [
+    databricks_library.wheel,
+    databricks_library.kafka,
     databricks_library.sql,
+    databricks_dbfs_file.metadata,
+    databricks_secret.ehname,
     databricks_secret.dbserver,
-    databricks_secret.dbname,
-    databricks_secret.dbuser,
-    databricks_secret.dbpassword,
     azurerm_container_group.sql
   ]
 }
