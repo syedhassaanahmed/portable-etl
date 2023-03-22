@@ -1,7 +1,8 @@
+import os
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StringType
 import pytest
-from common_lib.src.data_processor import DataProcessor
+from data_processor import DataProcessor
 
 
 @pytest.fixture
@@ -10,7 +11,9 @@ def spark():
 
 
 def test_data_processor(spark):
-    metadata = spark.read.csv("rooms.csv", header=True, inferSchema=True)
+    metadata = spark.read.csv(os.path.join(os.path.dirname(__file__),
+                                           "rooms.csv"),
+                              header=True, inferSchema=True)
 
     test_data = spark.createDataFrame(
         data=['{"deviceId": "sim000001","deviceTimestamp":"2023-01-01T10:10:11.5091350Z", "doubleValue": 0.2}',  # noqa: E501
