@@ -1,5 +1,5 @@
 {
-    "image": "mcr.microsoft.com/devcontainers/python:0-3.10",
+    "image": "mcr.microsoft.com/devcontainers/python:0-3.10", // https://stackoverflow.com/questions/75048688/picklingerror-could-not-serialize-object-indexerror-tuple-index-out-of-range
     "customizations": {
         "vscode": {
             "extensions": [
