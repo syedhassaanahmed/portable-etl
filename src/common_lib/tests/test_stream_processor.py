@@ -1,7 +1,9 @@
 from pyspark.sql import SparkSession
-
-from src.common_lib.src.stream_processor import StreamProcessor
 from pyspark.sql import types as T
+
+import sys
+sys.path.append('/workspaces/portable-etl/src/')
+from common_lib.src.stream_processor import StreamProcessor
 
 def test_stream_processor():
     spark = SparkSession.builder.appName("MyPySparkStreamingApp").getOrCreate()
@@ -9,10 +11,11 @@ def test_stream_processor():
 
     test_data = spark.createDataFrame(
         data=['{"deviceId": "sim000001", "deviceTimestamp":"2023-01-01T10:10:11.5091350Z", "doubleValue": 0.2}',
-              '{"deviceId": "sim000003", "deviceTimestamp":"2023-01-01T10:10:11.6091350Z", "doubleValue": 0.25}' ],
+              '{"deviceId": "sim000002", "deviceTimestamp":"2023-01-01T10:10:11.6091350Z", "doubleValue": 0.24}',
+              '{"deviceId": "sim000003", "deviceTimestamp":"2023-01-01T10:10:11.6091350Z", "doubleValue": 0.25}'],
         schema=T.StringType()
     )
 
     dataprocessor = StreamProcessor()
     results = dataprocessor.process_stream(df_metadata=metadata, df_raw_stream=test_data)
-    assert [row.roomId for row in results.collect()] == ['room1', 'room2']
+    assert [row.roomId for row in results.collect()] == ['room1', 'room1', 'room2']
