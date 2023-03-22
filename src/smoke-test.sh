@@ -6,7 +6,7 @@ docker compose up -d
 
 RETRIES=60
 MIN_ROW_COUNT=5
-TABLE_NAME="dbo.ProcessedStream"
+TABLE_NAME="dbo.ProcessedData"
 
 # shellcheck source=/dev/null
 source .env
@@ -24,7 +24,7 @@ do
 
     if [[ $ROW_COUNT =~ ^[0-9]+$ && $ROW_COUNT -ge $MIN_ROW_COUNT ]];
     then
-        echo "PySpark App is running and processing the IoT stream successfully."
+        echo "PySpark App is running and processing the data successfully."
         break
     else
         echo "Waiting for the PySpark App.. Attempt [${i}/${RETRIES}]"

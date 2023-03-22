@@ -1,10 +1,10 @@
 import os
 from pyspark.sql import SparkSession, DataFrame
-from stream_processor import StreamProcessor
+from data_processor import DataProcessor
 
 if __name__ == "__main__":
 
-    spark = SparkSession.builder.appName("MyPySparkStreamingApp").getOrCreate()
+    spark = SparkSession.builder.appName("MyPySparkApp").getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
 
     df_metadata = spark.read.csv("/metadata/rooms.csv",
@@ -16,13 +16,13 @@ if __name__ == "__main__":
         "subscribe": os.environ["KAFKA_TOPIC"]
     }
 
-    df_raw_stream = (spark.readStream
-                     .format("kafka")
-                     .options(**kafka_options)
-                     .load())
+    df_raw_data = (spark.readStream
+                   .format("kafka")
+                   .options(**kafka_options)
+                   .load())
 
-    processor = StreamProcessor()
-    df_output_stream = processor.process_stream(df_metadata, df_raw_stream)
+    processor = DataProcessor()
+    df_output = processor.process(df_metadata, df_raw_data)
 
     mssql_host = os.environ["MSSQL_HOST"]
     db_name = os.environ["DB_NAME"]
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     sql_server_options = {
         "driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
         "url": mssql_url,
-        "dbtable": "dbo.ProcessedStream",
+        "dbtable": "dbo.ProcessedData",
         "user": "sa",
         "password": os.environ["MSSQL_SA_PASSWORD"],
         "trustServerCertificate": True,
@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     # Using foreachBatch because the sql-spark-connector
     # doesn't directly support writing streams
-    query = (df_output_stream
+    query = (df_output
              .writeStream
              .outputMode("append")
              .foreachBatch(write_to_sql_server)

@@ -1,4 +1,5 @@
-setuptools
-wheel
+build
 pyspark==3.3.2
 pytest
+setuptools
+wheel

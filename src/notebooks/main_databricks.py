@@ -1,6 +1,6 @@
 # Databricks notebook source
 from pyspark.sql import DataFrame
-from stream_processor import StreamProcessor
+from data_processor import DataProcessor
 
 # COMMAND ----------
 
@@ -27,8 +27,8 @@ kafka_options = {
 
 # COMMAND ----------
 
-df_raw_stream = spark.readStream.format("kafka").options(**kafka_options).load()
-display(df_raw_stream)
+df_raw_data = spark.readStream.format("kafka").options(**kafka_options).load()
+display(df_raw_data)
 
 # COMMAND ----------
 
@@ -37,9 +37,9 @@ display(df_metadata)
 
 # COMMAND ----------
 
-processor = StreamProcessor()
-df_output_stream = processor.process_stream(df_metadata, df_raw_stream)
-display(df_output_stream)
+processor = DataProcessor()
+df_output = processor.process(df_metadata, df_raw_data)
+display(df_output)
 
 # COMMAND ----------
 
@@ -54,7 +54,7 @@ db_password = dbutils.secrets.get(scope_name, "DB_PASSWORD")
 sql_server_options = {
     "driver": "com.microsoft.sqlserver.jdbc.SQLServerDriver",
     "url": f"jdbc:sqlserver://{db_server};databaseName={db_name};",
-    "dbtable": "dbo.ProcessedStream",
+    "dbtable": "dbo.ProcessedData",
     "user": db_user,
     "password": db_password,
     "schemaCheckEnabled": False,
@@ -70,6 +70,6 @@ def write_to_sql_server(df: DataFrame, epoch_id: int) -> None:
 # COMMAND ----------
 
 # Using foreachBatch because the sql-spark-connector doesn't directly support writing streams
-df_output_stream.writeStream.outputMode("append").option(
+df_output.writeStream.outputMode("append").option(
     "checkpointLocation", "dbfs:/checkpointdir"
 ).foreachBatch(write_to_sql_server).start().awaitTermination()

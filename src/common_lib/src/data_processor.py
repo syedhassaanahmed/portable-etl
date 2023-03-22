@@ -9,21 +9,21 @@ from pyspark.sql.types import (
 )
 
 
-class StreamProcessor:
+class DataProcessor:
     def __init__(self) -> None:
-        self.stream_schema = StructType([
+        self.schema = StructType([
             StructField("deviceId", StringType()),
             StructField("deviceTimestamp", TimestampType()),
             StructField("doubleValue", DoubleType())
         ])
 
-    def process_stream(self, df_metadata: DataFrame,
-                       df_raw_stream: DataFrame) -> DataFrame:
+    def process(self, df_metadata: DataFrame,
+                df_raw_data: DataFrame) -> DataFrame:
         # The output schema should match the
         # Table definition in ../../db/create_table.sql
-        return (df_raw_stream
+        return (df_raw_data
                 .withColumn("data", F.from_json(F.col("value").cast("STRING"),
-                            self.stream_schema))
+                            self.schema))
                 .selectExpr("data.*")
                 .join(df_metadata, on="deviceId")
                 .withColumn("ingestionTimestamp", F.current_timestamp()))

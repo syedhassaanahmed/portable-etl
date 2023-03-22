@@ -21,7 +21,7 @@ data "databricks_node_type" "smallest" {
 }
 
 resource "databricks_secret_scope" "this" {
-  name = "MyPySparkStreamingAppSecrets"
+  name = "MyPySparkAppSecrets"
 }
 
 resource "databricks_secret" "ehname" {

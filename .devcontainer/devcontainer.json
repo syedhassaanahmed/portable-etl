@@ -1,5 +1,7 @@
 {
-    "image": "mcr.microsoft.com/devcontainers/python:0-3.10", // https://stackoverflow.com/questions/75048688/picklingerror-could-not-serialize-object-indexerror-tuple-index-out-of-range
+    // Pinning Python version to 3.10 due to the issue below
+    // https://stackoverflow.com/questions/75048688/picklingerror-could-not-serialize-object-indexerror-tuple-index-out-of-range
+    "image": "mcr.microsoft.com/devcontainers/python:0-3.10",
     "customizations": {
         "vscode": {
             "extensions": [
@@ -25,10 +27,10 @@
         }
     },
     "features": {
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
         "ghcr.io/devcontainers/features/azure-cli:1": {},
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
         "ghcr.io/devcontainers/features/terraform:1": {},
         "ghcr.io/devcontainers-contrib/features/spark-sdkman:2": {}
     },
-    "postCreateCommand": "git config --global --add safe.directory /workspaces/portable-etl && sudo pip3 install build && pip3 install -r src/requirements.txt"
+    "postCreateCommand": "git config --global --add safe.directory /workspaces/portable-etl && sudo pip3 install -r src/requirements.txt"
 }
