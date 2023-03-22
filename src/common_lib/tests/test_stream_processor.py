@@ -1,11 +1,10 @@
-from pyspark.sql import SparkSession, DataFrame
+from pyspark.sql import SparkSession
 from pyspark.sql import types as T
 import pytest
 
 import sys
 sys.path.append('/workspaces/portable-etl/src/')
 from common_lib.src.stream_processor import StreamProcessor
-
 
 @pytest.fixture
 def spark():
