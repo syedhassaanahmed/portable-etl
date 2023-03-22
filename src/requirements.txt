@@ -1,3 +1,4 @@
 setuptools
 wheel
 pyspark==3.3.2
+pytest
