@@ -6,6 +6,7 @@ import sys
 sys.path.append('/workspaces/portable-etl/src/')
 from common_lib.src.stream_processor import StreamProcessor
 
+
 @pytest.fixture
 def spark():
     return SparkSession.builder.appName("MyPySparkTests").getOrCreate()
