@@ -1,12 +1,18 @@
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql import types as T
+import pytest
 
 import sys
 sys.path.append('/workspaces/portable-etl/src/')
 from common_lib.src.stream_processor import StreamProcessor
 
-def test_stream_processor():
-    spark = SparkSession.builder.appName("MyPySparkStreamingApp").getOrCreate()
+
+@pytest.fixture
+def spark():
+    return SparkSession.builder.appName("MyPySparkTests").getOrCreate()
+
+
+def test_stream_processor(spark):
     metadata = spark.read.csv("src/common_lib/tests/rooms.csv", header=True, inferSchema=True)
 
     test_data = spark.createDataFrame(
