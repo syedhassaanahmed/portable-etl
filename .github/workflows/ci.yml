@@ -33,7 +33,9 @@ jobs:
 
     - uses: vemonet/setup-spark@v1
       with:
-        spark-version: 3.3.2
+        spark-version: '3.3.2'
+        hadoop-version: '3'
+        scala-version: '2.13'
 
     - name: Run PyTest
       env:
