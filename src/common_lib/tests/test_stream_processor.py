@@ -1,9 +1,10 @@
 from pyspark.sql import SparkSession
 from pyspark.sql import types as T
 import pytest
-
+import os
 import sys
-sys.path.append('/workspaces/portable-etl/src/')
+path = os.path.abspath(os.path.dirname(__file__) + '../../../')
+sys.path.append(path)
 from common_lib.src.stream_processor import StreamProcessor
 
 
