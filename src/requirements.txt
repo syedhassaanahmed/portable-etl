@@ -1,5 +1,7 @@
 build
+flake8
 pyspark==3.3.2
 pytest
+pytest-github-report
 setuptools
 wheel

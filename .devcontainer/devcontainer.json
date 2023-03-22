@@ -30,7 +30,7 @@
         "ghcr.io/devcontainers/features/azure-cli:1": {},
         "ghcr.io/devcontainers/features/docker-in-docker:2": {},
         "ghcr.io/devcontainers/features/terraform:1": {},
-        "ghcr.io/devcontainers-contrib/features/spark-sdkman:2": {}
+        "ghcr.io/devcontainers-contrib/features/spark-sdkman:2": { "version": "3.3.2"}
     },
     "postCreateCommand": "git config --global --add safe.directory /workspaces/portable-etl && sudo pip3 install -r src/requirements.txt"
 }

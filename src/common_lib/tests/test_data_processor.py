@@ -11,9 +11,8 @@ def spark():
 
 
 def test_data_processor(spark):
-    metadata = spark.read.csv(os.path.join(os.path.dirname(__file__),
-                                           "rooms.csv"),
-                              header=True, inferSchema=True)
+    metadata_path = os.path.join(os.path.dirname(__file__), "rooms.csv")
+    metadata = spark.read.csv(metadata_path, header=True, inferSchema=True)
 
     test_data = spark.createDataFrame(
         data=['{"deviceId": "sim000001","deviceTimestamp":"2023-01-01T10:10:11.5091350Z", "doubleValue": 0.2}',  # noqa: E501
