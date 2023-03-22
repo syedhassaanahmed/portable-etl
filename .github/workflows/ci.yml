@@ -24,6 +24,10 @@ jobs:
       working-directory: ./src
       run: flake8 ./pyspark_app ./common_lib
 
+    - name: Build common_lib
+      working-directory: ./src
+      run: python -m build ./common_lib
+
     - name: Terraform fmt check
       run: terraform fmt -check -recursive
 
