@@ -57,3 +57,8 @@ jobs:
       working-directory: ./src
       run: ./smoke-test.sh
       shell: bash
+
+    - name: Build Dev Container
+      uses: devcontainers/ci@v0.3
+      with:
+        imageName: ghcr.io/syedhassaanahmed/portable-etl-dev-container
