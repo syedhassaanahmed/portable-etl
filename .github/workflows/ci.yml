@@ -18,7 +18,9 @@ jobs:
 
     - name: Lint Python Code
       working-directory: ./src
-      run: flake8 ./pyspark_app ./common_lib
+      run: |
+        pip install flake8
+        flake8 ./pyspark_app ./common_lib
 
     - name: Lint Terraform
       run: terraform fmt -check -recursive
