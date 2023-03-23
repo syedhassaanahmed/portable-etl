@@ -46,22 +46,14 @@ jobs:
         pytest_github_report: true
       run: pytest
 
-    # # By default the GitHub Actions Ubuntu agents have Docker Compose 1.x installed
-    # - name: Install Latest Docker Compose
-    #   run: |
-    #     VERSION=$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | jq --raw-output .name -r)
-    #     curl -L https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-    #     sudo chmod +x /usr/local/bin/docker-compose
+    # By default the GitHub Actions Ubuntu agents have Docker Compose 1.x installed
+    - name: Install Latest Docker Compose
+      run: |
+        VERSION=$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | jq --raw-output .name -r)
+        curl -L https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
 
-    # - name: Run Smoke Test
-    #   working-directory: ./src
-    #   run: ./smoke-test.sh
-    #   shell: bash
-
-    - name: Build Dev Container and Run Smoke Test
-      uses: devcontainers/ci@v0.3
-      with:
-        cacheFrom: mcr.microsoft.com/devcontainers/python:0-3.10
-        runCmd: |
-          cd src
-          ./smoke-test.sh
+    - name: Run Smoke Test
+      working-directory: ./src
+      run: ./smoke-test.sh
+      shell: bash
