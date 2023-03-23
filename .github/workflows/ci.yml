@@ -16,44 +16,24 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install Dependencies
-      working-directory: ./src
-      run: pip install -r requirements.txt
-
     - name: Lint Python Code
       working-directory: ./src
       run: flake8 ./pyspark_app ./common_lib
 
-    - name: Build common_lib
-      working-directory: ./src
-      run: python -m build ./common_lib
-
     - name: Lint Terraform
       run: terraform fmt -check -recursive
 
-    - name: Terraform Init
+    - name: Init Terraform 
       working-directory: ./src
       run: terraform init
 
-    - uses: vemonet/setup-spark@v1
+    - name: Build Dev Container and Run Tests
+      uses: devcontainers/ci@v0.3
       with:
-        spark-version: '3.3.2'
-        hadoop-version: '3'
-        scala-version: '2.13'
+        cacheFrom: mcr.microsoft.com/devcontainers/python:0-3.10
+        push: never
+        runCmd: |
+          pytest --github-report
 
-    - name: Test Python Code
-      env:
-        pytest_github_report: true
-      run: pytest
-
-    # By default the GitHub Actions Ubuntu agents have Docker Compose 1.x installed
-    - name: Install Latest Docker Compose
-      run: |
-        VERSION=$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | jq --raw-output .name -r)
-        curl -L https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-        sudo chmod +x /usr/local/bin/docker-compose
-
-    - name: Run Smoke Test
-      working-directory: ./src
-      run: ./smoke-test.sh
-      shell: bash
+          cd src
+          ./smoke-test.sh
