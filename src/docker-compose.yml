@@ -80,8 +80,6 @@ services:
       "--conf", "spark.executor.processTreeMetrics.enabled=true",
       "--conf", "spark.metrics.conf.*.sink.prometheusServlet.class=org.apache.spark.metrics.sink.PrometheusServlet",
       "--conf", "spark.metrics.conf.*.sink.prometheusServlet.path=/metrics/prometheus",
-      # "--conf", "spark.metrics.conf.master.sink.prometheusServlet.path=/metrics/master/prometheus",
-      # "--conf", "spark.metrics.conf.applications.sink.prometheusServlet.path=/metrics/applications/prometheus",
       "--conf", "spark.metrics.namespace=MyPySparkStreamingApp",
       "--conf", "spark.metrics.appStatusSource.enabled=true",
       "--py-files", "/common_lib/*.whl", "/app/main.py"]
