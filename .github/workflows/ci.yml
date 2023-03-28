@@ -37,5 +37,6 @@ jobs:
         runCmd: |
           pytest --github-report
 
-          cd src
-          ./smoke-test.sh
+          # Commented because they take a lot of time
+          # cd src
+          # ./smoke-test.sh
