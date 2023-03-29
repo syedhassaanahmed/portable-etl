@@ -5,8 +5,11 @@
     "customizations": {
         "vscode": {
             "extensions": [
+                "caarlos0.language-prometheus",
                 "databricks.databricks",
                 "hashicorp.terraform",
+                "GitHub.codespaces",
+                "github.vscode-github-actions",
                 "hediet.vscode-drawio",
                 "jeppeandersen.vscode-kafka",
                 "ms-azuretools.vscode-azureterraform",
@@ -15,7 +18,8 @@
                 "ms-python.flake8",
                 "ms-python.python",
                 "RandomFractalsInc.vscode-data-preview",
-                "timonwong.shellcheck"
+                "timonwong.shellcheck",
+                "yesoreyeram.grafana"
             ]
         },
         "codespaces": {
@@ -32,5 +36,5 @@
         "ghcr.io/devcontainers/features/terraform:1": {},
         "ghcr.io/devcontainers-contrib/features/spark-sdkman:2": {}
     },
-    "postCreateCommand": "git config --global --add safe.directory /workspaces/portable-etl && sudo pip3 install -r src/requirements.txt"
+    "postCreateCommand": "sudo pip3 install -r src/requirements.txt"
 }
