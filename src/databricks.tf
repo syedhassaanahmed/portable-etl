@@ -82,7 +82,7 @@ locals {
   wheel_name     = "common_lib-0.0.1-py3-none-any.whl"
 }
 
-# The wheel should be built outside of Terraform by "sudo python3 -m build ./common_lib"
+# The wheel should be built outside of Terraform by "python3 -m build ./common_lib"
 resource "databricks_dbfs_file" "wheel" {
   source = "${path.module}/common_lib/dist/${local.wheel_name}"
   path   = "/FileStore/${local.wheel_name}"

@@ -8,23 +8,27 @@ Workload portability is important to manufacturing customers, as it allows them 
 In this sample we'll showcase an E2E data pipeline leveraging Spark's data processing capabilities.
 
 ## How?
-### Edge
-In the Edge version, we provision and orchestrate everything with [Docker Compose](https://docs.docker.com/compose/). The pipeline begins with [Azure IoT Device Telemetry Simulator](https://github.com/Azure-Samples/Iot-Telemetry-Simulator) sending synthetic Time Series data to a [Confluent Community Kafka Server](https://docs.confluent.io/platform/current/platform-quickstart.html#ce-docker-quickstart). A PySpark app then processes the Time Series, applies some metadata and writes the enriched results to a SQL DB hosted in [SQL Server 2022 Linux container](https://learn.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-ver16&pivots=cs1-bash).
-
-<div align="center">
-    <img src="./docs/edge-architecture.png">
-</div>
-
 ### Cloud
 In the Cloud version, we provision all infrastructure with [Terraform](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs).
 
-**Note:** Prior to running `terraform apply` you must ensure the [wheel](https://wheel.readthedocs.io/en/stable/) `./src/common_lib/dist/common_lib-*.whl` exists locally by executing `sudo python3 -m build ./src/common_lib`.
+**Note:** Prior to running `terraform apply` you must ensure the [wheel](https://wheel.readthedocs.io/en/stable/) `./src/common_lib/dist/common_lib-*.whl` exists locally by executing `python3 -m build ./src/common_lib`.
 
 The IoT Telemetry Simulator is hosted in [Azure Container Instances](https://azure.microsoft.com/en-us/products/container-instances). It sends generated data to a Kafka broker, [exposed through Azure Event Hubs](https://learn.microsoft.com/en-us/azure/event-hubs/azure-event-hubs-kafka-overview).
-The ETL workload is represented in a [Databricks Job](https://learn.microsoft.com/en-us/azure/databricks/workflows/jobs/jobs). This job is responsible for reading and enriching the data from sources and store the final output to an [Azure SQL DB](https://azure.microsoft.com/en-us/products/azure-sql/database/). Key point to note here is that the data processing logic is shared between the Edge and Cloud through the `common_lib` Wheel.
+The ETL workload is represented in a [Databricks Job](https://learn.microsoft.com/en-us/azure/databricks/workflows/jobs/jobs). This job is responsible for reading and enriching the data from sources and store the final output to an [Azure SQL DB](https://azure.microsoft.com/en-us/products/azure-sql/database/).
 
 <div align="center">
     <img src="./docs/cloud-architecture.png">
+</div>
+
+### Edge
+In the Edge version, we provision and orchestrate everything with [Docker Compose](https://docs.docker.com/compose/).
+
+**Note:** Please use the `docker compose` tool instead of the [older version](https://stackoverflow.com/a/66516826) `docker-compose`.
+
+The pipeline begins with [Azure IoT Device Telemetry Simulator](https://github.com/Azure-Samples/Iot-Telemetry-Simulator) sending synthetic Time Series data to a [Confluent Community Kafka Server](https://docs.confluent.io/platform/current/platform-quickstart.html#ce-docker-quickstart). A PySpark app then processes the Time Series, applies some metadata and writes the enriched results to a SQL DB hosted in [SQL Server 2022 Linux container](https://learn.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-ver16&pivots=cs1-bash). The key point to note here is that the data processing logic is shared between the Cloud and Edge through the `common_lib` Wheel.
+
+<div align="center">
+    <img src="./docs/edge-architecture.png">
 </div>
 
 ## NFRs
