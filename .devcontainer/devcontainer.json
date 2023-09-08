@@ -2,6 +2,11 @@
     // Pinning Python version to 3.10 due to the issue below
     // https://stackoverflow.com/questions/75048688/picklingerror-could-not-serialize-object-indexerror-tuple-index-out-of-range
     "image": "mcr.microsoft.com/devcontainers/python:0-3.10",
+    "hostRequirements": {
+		"cpus": 4,
+		"memory": "8gb",
+		"storage": "32gb"
+	 },
     "customizations": {
         "vscode": {
             "extensions": [
