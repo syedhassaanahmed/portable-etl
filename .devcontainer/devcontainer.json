@@ -1,7 +1,5 @@
 {
-    // Pinning Python version to 3.10 due to the issue below
-    // https://stackoverflow.com/questions/75048688/picklingerror-could-not-serialize-object-indexerror-tuple-index-out-of-range
-    "image": "mcr.microsoft.com/devcontainers/python:0-3.10",
+    "image": "mcr.microsoft.com/devcontainers/python:3",
     "hostRequirements": {
         "cpus": 4,
         "memory": "8gb",
@@ -13,8 +11,6 @@
                 "caarlos0.language-prometheus",
                 "databricks.databricks",
                 "hashicorp.terraform",
-                "GitHub.codespaces",
-                "github.vscode-github-actions",
                 "hediet.vscode-drawio",
                 "jeppeandersen.vscode-kafka",
                 "ms-azuretools.vscode-azureterraform",
@@ -39,7 +35,7 @@
         "ghcr.io/devcontainers/features/azure-cli:1": {},
         "ghcr.io/devcontainers/features/docker-in-docker:2": {},
         "ghcr.io/devcontainers/features/terraform:1": {},
-        "ghcr.io/devcontainers-contrib/features/spark-sdkman:2": {}
+        "ghcr.io/devcontainers-contrib/features/spark-sdkman:2": { "version": "3.4.0"}
     },
     "postCreateCommand": "sudo pip3 install -r src/requirements.txt"
 }
