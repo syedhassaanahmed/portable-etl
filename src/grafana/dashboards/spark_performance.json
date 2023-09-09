@@ -275,7 +275,7 @@
         "sortBy": [
           {
             "desc": false,
-            "displayName": "{__name__=\"spark_info\", instance=\"spark:4040\", job=\"Spark Executors Metrics\", revision=\"5103e00c4ce5fcc4264ca9c4df12295d42557af6\", version=\"3.3.2\"}"
+            "displayName": "{__name__=\"spark_info\", instance=\"spark:4040\", job=\"Spark Executors Metrics\", revision=\"87a5442f7ed96b11051d8a9333476d080054e5a0\", version=\"3.4.0\"}"
           }
         ]
       },

@@ -96,7 +96,7 @@ resource "databricks_library" "wheel" {
 resource "databricks_library" "kafka" {
   cluster_id = databricks_cluster.this.id
   maven {
-    coordinates = "org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2"
+    coordinates = "org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0"
   }
 }
 
