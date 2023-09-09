@@ -35,7 +35,7 @@
         "ghcr.io/devcontainers/features/azure-cli:1": {},
         "ghcr.io/devcontainers/features/docker-in-docker:2": {},
         "ghcr.io/devcontainers/features/terraform:1": {},
-        "ghcr.io/devcontainers-contrib/features/spark-sdkman:2": { "version": "3.4.0"}
+        "ghcr.io/devcontainers-contrib/features/spark-sdkman:2": { "version": "3.3.2"}
     },
     "postCreateCommand": "sudo pip3 install -r src/requirements.txt"
 }

@@ -11,8 +11,9 @@ provider "databricks" {
   azure_workspace_resource_id = azurerm_databricks_workspace.dbw.id
 }
 
-data "databricks_spark_version" "latest" {
-  depends_on = [azurerm_databricks_workspace.dbw]
+data "databricks_spark_version" "v332" {
+  spark_version = "3.3.2"
+  depends_on    = [azurerm_databricks_workspace.dbw]
 }
 
 data "databricks_node_type" "smallest" {
@@ -68,7 +69,7 @@ resource "databricks_secret" "dbpassword" {
 
 resource "databricks_cluster" "this" {
   cluster_name            = "Exploration Cluster"
-  spark_version           = data.databricks_spark_version.latest.id
+  spark_version           = data.databricks_spark_version.v332.id
   node_type_id            = data.databricks_node_type.smallest.id
   autotermination_minutes = 20
   autoscale {
@@ -96,7 +97,7 @@ resource "databricks_library" "wheel" {
 resource "databricks_library" "kafka" {
   cluster_id = databricks_cluster.this.id
   maven {
-    coordinates = "org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0"
+    coordinates = "org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2"
   }
 }
 

@@ -1,6 +1,6 @@
 build
 flake8
-pyspark==3.4.0
+pyspark==3.3.2
 pytest
 pytest-github-report
 setuptools
